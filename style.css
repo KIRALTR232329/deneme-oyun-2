@@ -471,3 +471,36 @@ img, video {
     color: #ffffff; /* Metin rengini beyaza çevir */
     transform: scale(1.05); /* Butonu biraz büyüt */
 }
+.button {
+    transition: background-color 0.3s ease;
+  }
+  
+  .button:hover {
+    background-color: #555; /* Butonun rengini değiştir */
+  }
+  .question-container {
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  
+  .question-container.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+.flash-green {
+  animation: flashGreen 0.5s 2; /* 2 kez yanıp sönen yeşil bir ışık */
+}
+
+@keyframes flashGreen {
+  from, to { background-color: transparent; }
+  50% { background-color: green; }
+}:root {
+    --primary-color: #4CAF50;
+    --text-color: #333;
+}
+
+.button {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+}
