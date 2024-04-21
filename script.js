@@ -22,7 +22,7 @@ let Questions = [
     {
         soru: "Böceklerin kaç bacağı vardır?",
         cevaplar: ["4", "6", "8", "40"],
-        doğru: "C"
+        doğru: "B"
     },
     {
         soru: "Hangisi omurgalı bir canlıdır?",
@@ -34,6 +34,67 @@ let Questions = [
         cevaplar: ["Kornea", "Retina", "Tulumcuk", "Kesecik"],
         doğru: "B"
     },
+    {
+        soru: "Aşağıdaki canlılardan hangisinde kemikten bir iskelet yoktur?",
+        cevaplar: ["Köpek balığı", "Hamsi", "Serçe", "Balina"],
+        doğru: "A"
+    },
+    {
+        soru: "Hangisi kalbe kirli kan getiren damardır?",
+        cevaplar: ["Üst ana toplar damar", "Aort", "Akciğer toplar damarı", "Akciğer atar damarı"],
+        doğru: "C"
+    },
+    {
+        soru: "Kanın sıvı kısmına ne isim verilir?",
+        cevaplar: ["Alyuvar", "Plazma", "Akyuvar", "Trombosit"],
+        doğru: "B"
+    },
+    {
+        soru: "Aşağıdakilerden hangisi memeliler sınıfından bir canlı değildir?",
+        cevaplar: ["Yunus", "Balina", "Yarasa", "Penguen"],
+        doğru: "D"
+    },
+    {
+        soru: "Hangisi sadece hayvan hücre zarında bulunan zara dayanıklılık veren lipittir?",
+        cevaplar: ["Kolesterol", "Glikoz", "Aminoasit", "Enzim"],
+        doğru: "A"
+    },
+    {
+        soru: "DNA'nın ikili sarmal yapısının açıklayan bilim insanları hangileridir?",
+        cevaplar: ["Ian Wilmut", "Watson ve Crick", "Robert Hooke ve Avery", "Charles Darwin ve Lamark"],
+        doğru: "B"
+    },
+    {
+        soru: "Bir DNA sarmalında 2000 Adenin nükleotidi varsa kaç Timin nükleotidi bulunur?",
+        cevaplar: ["1000", "3000", "2000", "4000"],
+        doğru: "C"
+    },
+    {
+        soru: "Mikroorganizmalara karşı koruyucu olarak üretilen proteinlere ne denir?",
+        cevaplar: ["Bağışıklık", "Antijen", "Antikor", "Lenfosit"],
+        doğru: "C"
+    },
+    {
+        soru: "Bir hayvansal hücrede yağların sindiriminin yapıldığı organel hangisidir?",
+        cevaplar: ["Lizozom", "Ribozom", "Golgi", "Endoplazmik retikulum"],
+        doğru: "A"
+    },
+    {
+        soru: "2N=46 kromozonlu bir insanın karaciğer hücresindeki kromozon sayısı kaçtır?",
+        cevaplar: ["23", "46", "92", "184"],
+        doğru: "B"
+    },
+    {
+        soru: "Aşağıdaki enzimlerden hangisi incebağırsaktan salgılanmaz?",
+        cevaplar: ["Enteropeptidaz", "Lipaz", "Maltaz", "Dekstrinaz"],
+        doğru: "B"
+    },
+    {
+        soru: "Belirli bir bölgede yaşayan tek bir türe ait canlı topluluğu anlamına gelen kelime hangisidir?",
+        cevaplar: ["Komünite", "Habitat", "Niş", "Popülasyon"],
+        doğru: "D"
+    },
+
     {
         soru: "Fotosentez işlemi sırasında hangi gaz ortamında salınır?",
         cevaplar: ["Karbon dioksit", "Azot", "Oksijen", "Hidrojen"],
@@ -227,34 +288,36 @@ function loadAndDisplayScores() {
 
 // Oyun bittiğinde veya bir skor kaydedildiğinde skorları güncelleyen fonksiyon
 function saveScore(newScore) {
-function saveScore(newScore) {
-    const playerName = document.getElementById('player-name-input').value;
+    // localStorage'dan skorları çek, eğer yoksa boş bir dizi ata
     const scores = JSON.parse(localStorage.getItem('highScores')) || [];
 
-    // İsim kontrolü yapılması
-    let isNameExist = false;
-    scores.forEach(score => {
-        if (score.name === playerName) {
-            // Eğer isim zaten listede varsa, skoru güncelle
-            score.score = newScore;
-            isNameExist = true;
+    // Oyuncunun adını kontrol et ve skoru güncelle veya ekle
+    const existingIndex = scores.findIndex(score => score.name === newScore.name);
+    if (existingIndex !== -1) {
+        // Eğer mevcut skor yeni skordan düşükse, güncelle
+        if (scores[existingIndex].score < newScore.score) {
+            scores[existingIndex].score = newScore.score;
         }
-    });
-
-    // Eğer isim listede yoksa, yeni bir giriş olarak ekle
-    if (!isNameExist) {
-        scores.push({ name: playerName, score: newScore });
+    } else {
+        // Yeni skoru listeye ekle
+        scores.push(newScore);
     }
 
-    // Skorları büyükten küçüğe sırala
+    // Skorları büyükten küçüğe doğru sırala
     scores.sort((a, b) => b.score - a.score);
 
-    // En iyi 10 skoru sakla
-    localStorage.setItem('highScores', JSON.stringify(scores.slice(0, 10)));
+    // Eğer skor listesi 10'dan fazla elemana sahipse, en düşük skoru (son elemanı) sil
+    if (scores.length > 10) {
+        scores.pop(); // En düşük skoru (son elemanı) sil
+    }
+
+    // Güncellenmiş skor listesini localStorage'a kaydet
+    localStorage.setItem('highScores', JSON.stringify(scores));
 
     // Skorları yeniden yükle ve göster
     loadAndDisplayScores();
 }
+
 
 
 
@@ -268,9 +331,9 @@ document.getElementById('go-home').addEventListener('click', function() {
     loadAndDisplayScores(); // Sayfa yeniden yüklendiğinde skorları tekrar yükle ve göster
 });
 document.getElementById('save-score').addEventListener('click', function() {
-    const playerName = document.getElementById('player-name').value;
-    const score = document.getElementById('final-score').textContent;
-    
+    const playerName = document.getElementById('player-name').value.trim();
+    const score = parseInt(document.getElementById('final-score').textContent);
+
     if (!playerName) {
         alert("Lütfen adınızı girin.");
         return;
@@ -278,20 +341,36 @@ document.getElementById('save-score').addEventListener('click', function() {
 
     // Mevcut skorları yükle
     const scores = JSON.parse(localStorage.getItem('highScores')) || [];
-    
-    // Yeni skoru ekle
-    scores.push({ name: playerName, score: parseInt(score) });
-    scores.sort((a, b) => b.score - a.score); // Skorları büyükten küçüğe sırala
-    
+
+    // Aynı isimle olan skoru bul
+    const existingScoreIndex = scores.findIndex(s => s.name === playerName);
+
+    if (existingScoreIndex >= 0) {
+        // Eğer yeni skor daha yüksekse güncelle
+        if (scores[existingScoreIndex].score < score) {
+            scores[existingScoreIndex].score = score;
+        }
+    } else {
+        // Yeni skoru ekle
+        scores.push({ name: playerName, score: score });
+    }
+
+    // Skorları büyükten küçüğe sırala
+    scores.sort((a, b) => b.score - a.score);
+
     // En iyi 10 skoru sakla
-    localStorage.setItem('highScores', JSON.stringify(scores.slice(0, 10)));
-    
+    const topScores = scores.slice(0, 10);
+
+    // Skorları localStorage'a kaydet
+    localStorage.setItem('highScores', JSON.stringify(topScores));
+
     // Skorları yeniden yükle ve göster
     loadAndDisplayScores();
-    
+
     // İsim ve skor kaydedildikten sonra input alanını temizle
     document.getElementById('player-name').value = '';
 });
+
 function showSaveScoreOption(playerScore) {
     const scores = JSON.parse(localStorage.getItem('highScores')) || [];
     let isScoreHighEnough = false;
@@ -455,3 +534,11 @@ function playSoruBaslangicSesi() {
 function playYanlisCevapSesi() {
     yanlisCevapSesi.play();
 }
+function showCorrectAnswerFeedback() {
+    const correctAnswerElement = document.querySelector('.correct-answer');
+    correctAnswerElement.classList.add('flash-green');
+    setTimeout(() => {
+      correctAnswerElement.classList.remove('flash-green');
+    }, 1000); // 1 saniye sonra efekti kaldır
+  }
+  
