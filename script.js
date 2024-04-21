@@ -227,26 +227,35 @@ function loadAndDisplayScores() {
 
 // Oyun bittiğinde veya bir skor kaydedildiğinde skorları güncelleyen fonksiyon
 function saveScore(newScore) {
-    // localStorage'dan skorları çek, eğer yoksa boş bir dizi ata
+function saveScore(newScore) {
+    const playerName = document.getElementById('player-name-input').value;
     const scores = JSON.parse(localStorage.getItem('highScores')) || [];
 
-    // Yeni skoru listeye ekle
-    scores.push(newScore);
+    // İsim kontrolü yapılması
+    let isNameExist = false;
+    scores.forEach(score => {
+        if (score.name === playerName) {
+            // Eğer isim zaten listede varsa, skoru güncelle
+            score.score = newScore;
+            isNameExist = true;
+        }
+    });
 
-    // Skorları büyükten küçüğe doğru sırala
-    scores.sort((a, b) => b.score - a.score);
-
-    // Eğer skor listesi 10'dan fazla elemana sahipse, en düşük skoru (son elemanı) sil
-    if (scores.length > 10) {
-        scores.pop(); // En düşük skoru (son elemanı) sil
+    // Eğer isim listede yoksa, yeni bir giriş olarak ekle
+    if (!isNameExist) {
+        scores.push({ name: playerName, score: newScore });
     }
 
-    // Güncellenmiş skor listesini localStorage'a kaydet
-    localStorage.setItem('highScores', JSON.stringify(scores));
+    // Skorları büyükten küçüğe sırala
+    scores.sort((a, b) => b.score - a.score);
+
+    // En iyi 10 skoru sakla
+    localStorage.setItem('highScores', JSON.stringify(scores.slice(0, 10)));
 
     // Skorları yeniden yükle ve göster
     loadAndDisplayScores();
 }
+
 
 
 // Sayfa yüklendiğinde skorları yükle ve göster
