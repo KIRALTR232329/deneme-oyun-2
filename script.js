@@ -22,7 +22,7 @@ let Questions = [
     {
         soru: "Böceklerin kaç bacağı vardır?",
         cevaplar: ["4", "6", "8", "40"],
-        doğru: "B"
+        doğru: "C"
     },
     {
         soru: "Hangisi omurgalı bir canlıdır?",
@@ -534,11 +534,3 @@ function playSoruBaslangicSesi() {
 function playYanlisCevapSesi() {
     yanlisCevapSesi.play();
 }
-function showCorrectAnswerFeedback() {
-    const correctAnswerElement = document.querySelector('.correct-answer');
-    correctAnswerElement.classList.add('flash-green');
-    setTimeout(() => {
-      correctAnswerElement.classList.remove('flash-green');
-    }, 1000); // 1 saniye sonra efekti kaldır
-  }
-  
